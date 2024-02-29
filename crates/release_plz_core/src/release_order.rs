@@ -154,6 +154,17 @@ mod tests {
             .assert_eq(&release_order(&pkgs).unwrap_err().to_string());
     }
 
+    #[test]
+    fn multiple_packages_including_dev_dep() {
+        let pkgs = [
+            &pkg("core", &[]),
+            &pkg("a", &[dep("core"), dev_dep("dev")]),
+            &pkg("b", &[dep("core"), dep("a"), dev_dep("dev")]),
+            &pkg("dev", &[]),
+        ];
+        assert_eq!(order(&pkgs), ["core", "dev", "a", "b"]);
+    }
+
     /// ┌──┐
     /// │  ▼
     /// A  B (dev dependency)
